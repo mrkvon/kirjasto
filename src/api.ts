@@ -22,7 +22,7 @@ export type Library = {
     Coordinates: null|[number, number],
   },
   Phone: { Number: string },
-  Picture: {}, // TODO
+  Picture: { Files: { medium: { url: string }}}, // TODO
   Schedules: Schedule[],
   ServiceIds: string[],
 }

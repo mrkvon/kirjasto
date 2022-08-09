@@ -5,7 +5,9 @@ type Schedule = {
     SelfService: {
       times: {Opens: string, Closes: string, Status: 1|2 }[]
     }
-  }
+  },
+  Date: string,
+  LongDayname: string,
 }
 
 export type Library = {

@@ -8,14 +8,33 @@ import './App.css';
 import { getLibraries } from './api';
 import type {Library} from './api'
 import blueCircle from './circle_dark_blue.svg'
+import greenCircle from './circle_green.svg'
 import redCircle from './circle_red.svg'
+import grayCircle from './circle_gray.svg'
 import MarkerClusterGroup from '@changey/react-leaflet-markercluster';
 import { calculateNewValue } from '@testing-library/user-event/dist/utils';
 import Info from './Info';
+import TimeControl from './TimeControl';
+import { getTimeRange, libraryOpen } from './time';
 
-const icon = L.icon({
+const generalIcon = L.icon({
   iconUrl: blueCircle,
   iconSize: [20, 20],
+})
+
+const openIcon = L.icon({
+  iconUrl: greenCircle,
+  iconSize: [20, 20],
+})
+
+const selfServiceIcon = L.icon({
+  iconUrl: redCircle,
+  iconSize: [20, 20]
+})
+
+const unknownIcon = L.icon({
+  iconUrl: grayCircle,
+  iconSize: [20, 20]
 })
 
 const MapClick = ({ onClick }: { onClick?: (map: L.Map) => void }) => {
@@ -34,6 +53,8 @@ function App() {
 
   const [libraries, setLibraries] = useState<Library[]>([])
   const [selectedLibraryId, setSelectedLibraryId] = useState('')
+  const [timeline, setTimeline] = useState(false)
+  const [selectedTime, setSelectedTime] = useState(Date.now())
 
   useEffect(() => {
     getLibraries('fi').then(l => setLibraries(l))
@@ -45,6 +66,18 @@ function App() {
   }, [libraries])
 
   const selectedLibrary = libraries.find(l => l.Id === selectedLibraryId)
+  const [from, to] = getTimeRange(libraries)
+
+  const markers = timeline ? <>
+        {libraries.map(library => [library, libraryOpen(library, selectedTime)] as const)
+        .filter(([, status]) => status).filter(([library]) => library.Address.Coordinates).map(([library, open]) => {
+        return <Marker key={library.Id} position={library.Address.Coordinates as [number, number]} icon={open === 1 ? openIcon : open === 2 ? selfServiceIcon : unknownIcon} eventHandlers={{ click: () => setSelectedLibraryId(library.Id)}}>
+        </Marker>})}
+  </>: <>
+        {libraries.filter(library => library.Address.Coordinates).map(library => {
+        return <Marker key={library.Id} position={library.Address.Coordinates as [number, number]} icon={generalIcon} eventHandlers={{ click: () => setSelectedLibraryId(library.Id)}}>
+        </Marker>})}
+  </>
 
   return (
     <>
@@ -54,13 +87,12 @@ function App() {
         url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
       />
       <MapClick onClick={() => setSelectedLibraryId('')}/>
-      <MarkerClusterGroup>
-        {libraries.filter(library => library.Address.Coordinates).map(library => 
-        <Marker key={library.Id} position={library.Address.Coordinates as [number, number]} icon={icon} eventHandlers={{ click: () => setSelectedLibraryId(library.Id)}}>
-        </Marker>)}
+      <MarkerClusterGroup maxClusterRadius={10}>
+        {markers}
       </MarkerClusterGroup>
     </MapContainer>
     {selectedLibrary && <Info library={selectedLibrary} />}
+    <TimeControl active={timeline} onToggle={() => setTimeline(isOn => !isOn)} from={from} to={to-1} time={selectedTime} onChangeTime={time => setSelectedTime(time)} />
     </>
   );
 }

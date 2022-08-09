@@ -1,25 +1,54 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useEffect, useState } from 'react';
+import * as L from 'leaflet'
+import 'leaflet/dist/leaflet.css'
+import 'leaflet.markercluster/dist/MarkerCluster.css'
+import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import './App.css';
+import { getLibraries } from './api';
+import type {Library} from './api'
+import blueCircle from './circle_dark_blue.svg'
+import redCircle from './circle_red.svg'
+import MarkerClusterGroup from '@changey/react-leaflet-markercluster';
+
+const icon = L.icon({
+  iconUrl: blueCircle,
+  iconSize: [20, 20],
+})
 
 function App() {
+
+  const [libraries, setLibraries] = useState<Library[]>([])
+  const [selectedLibrary, setSelectedLibrary] = useState('')
+
+  useEffect(() => {
+    getLibraries('fi').then(l => setLibraries(l))
+  }, [])
+
+  useEffect(() => {
+    console.log(libraries)
+    console.log(Object.fromEntries(libraries.map(library => [library.Id, library.Address.Coordinates])))
+  }, [libraries])
+
+  useEffect(() => {
+    console.log(selectedLibrary)
+  }, [selectedLibrary])
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <MapContainer center={[60.1674881,24.9427473]} zoom={11} style={{height: '100vh', width: '100vw'}}>
+      <TileLayer
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
+      <MarkerClusterGroup>
+        {libraries.filter(library => library.Address.Coordinates).map(library => 
+        <Marker position={library.Address.Coordinates as [number, number]} icon={icon} eventHandlers={{ click: () => setSelectedLibrary(library.Id)}}>
+          <Popup>
+            {library.Name}
+          </Popup>
+        </Marker>)}
+      </MarkerClusterGroup>
+    </MapContainer>
   );
 }
 

@@ -1,43 +1,46 @@
-import { Library } from "./api"
+import { Library } from './api'
 
-export const libraryOpen = (library: Library, time: number): -1|0|1|2 => {
+export const libraryOpen = (library: Library, time: number): -1 | 0 | 1 | 2 => {
   // -1 : errored - schedule doesn't exist
   // 0 : closed
   // 1 : open
   // 2 : self-service
   try {
     const schedule = getSchedule(library, time)
-  // get schedule time
-  const foundTime = schedule.Sections.SelfService.times.find(t => {
-    const opens = parseTime(t.Opens)
-    const closes = parseTime(t.Closes)
+    // get schedule time
+    const foundTime = schedule.Sections.SelfService.times.find(t => {
+      const opens = parseTime(t.Opens)
+      const closes = parseTime(t.Closes)
 
-    let opensTime = new Date(schedule.Date)
-    let closesTime = new Date(schedule.Date)
-    opensTime.setHours(opens)
-    closesTime.setHours(closes)
-    opensTime.setMinutes((opens - Math.floor(opens)) * 60)
-    closesTime.setMinutes((closes - Math.floor(closes)) * 60)
-    opensTime.setSeconds(0)
-    closesTime.setSeconds(0)
-    opensTime.setMilliseconds(0)
-    closesTime.setMilliseconds(0)
+      let opensTime = new Date(schedule.Date)
+      let closesTime = new Date(schedule.Date)
+      opensTime.setHours(opens)
+      closesTime.setHours(closes)
+      opensTime.setMinutes((opens - Math.floor(opens)) * 60)
+      closesTime.setMinutes((closes - Math.floor(closes)) * 60)
+      opensTime.setSeconds(0)
+      closesTime.setSeconds(0)
+      opensTime.setMilliseconds(0)
+      closesTime.setMilliseconds(0)
 
-    return time >= opensTime.getTime() && time < closesTime.getTime()
-  })
-  return foundTime?.Status ?? 0
+      return time >= opensTime.getTime() && time < closesTime.getTime()
+    })
+    return foundTime?.Status ?? 0
   } catch {
     return -1
   }
 }
 
 export const getSchedule = (library: Library, time: number) => {
-  const schedule = library.Schedules.find(schedule => 
-    time >= new Date(schedule.Date).setHours(0) && time < new Date(schedule.Date).setHours(24))
-    if (!schedule) {
-      throw new Error('schedule not found')
-    }
-    return schedule
+  const schedule = library.Schedules.find(
+    schedule =>
+      time >= new Date(schedule.Date).setHours(0) &&
+      time < new Date(schedule.Date).setHours(24),
+  )
+  if (!schedule) {
+    throw new Error('schedule not found')
+  }
+  return schedule
 }
 
 export const getTimeRange = (libraries: Library[]): [number, number] => {
@@ -55,6 +58,7 @@ const parseTime = (a: string) => {
   return Number(hours) + Number(minutes) / 60
 }
 
+/*
 function getTimes(kirjasto: Library, day: number) {
   const { times } = kirjasto.Schedules[day].Sections.SelfService
   return times
@@ -63,3 +67,4 @@ function getTimes(kirjasto: Library, day: number) {
 function getDate(kirjasto: Library, day: number) {
   return [kirjasto.Schedules[day].Date, kirjasto.Schedules[day].LongDayname]
 }
+*/

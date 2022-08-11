@@ -1,1 +1,1 @@
-declare module '@changey/react-leaflet-markercluster';
+declare module '@changey/react-leaflet-markercluster'

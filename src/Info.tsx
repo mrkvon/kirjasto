@@ -1,18 +1,8 @@
 import { Library } from './api'
+import styles from './Info.module.scss'
 
 const Info = ({ library }: { library: Library }) => (
-  <div
-    style={{
-      height: '100vh',
-      width: '400px',
-      backgroundColor: '#fff',
-      position: 'absolute',
-      top: 0,
-      right: 0,
-      zIndex: 1000,
-      overflow: 'auto',
-    }}
-  >
+  <div className={styles.container}>
     <h1>{library.Name}</h1>
     <img
       src={library.Picture.Files.medium.url}

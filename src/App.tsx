@@ -13,6 +13,7 @@ import grayCircle from './circle_gray.svg'
 import greenCircle from './circle_green.svg'
 import redCircle from './circle_red.svg'
 import Info from './Info'
+import mapStyles from './Map.module.scss'
 import { getTimeRange, libraryOpen } from './time'
 import TimeControl from './TimeControl'
 
@@ -111,9 +112,9 @@ function App() {
   return (
     <>
       <MapContainer
+        className={mapStyles.container}
         center={[60.1674881, 24.9427473]}
         zoom={11}
-        style={{ height: '100vh', width: '100vw' }}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

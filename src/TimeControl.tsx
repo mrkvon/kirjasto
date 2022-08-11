@@ -1,3 +1,5 @@
+import styles from './TimeControl.module.scss'
+
 const TimeControl = ({
   active,
   onToggle,
@@ -13,10 +15,11 @@ const TimeControl = ({
   time: number
   onChangeTime: (time: number) => void
 }) => (
-  <div style={{ position: 'absolute', bottom: 0, zIndex: 1000 }}>
+  <div className={styles.container}>
     <button onClick={onToggle}>Timeline {active ? 'On' : 'Off'}</button>
     {active && (
       <input
+        className={styles.timeline}
         value={time}
         min={from}
         max={to}
@@ -25,7 +28,6 @@ const TimeControl = ({
           onChangeTime(+e.target.value)
         }}
         type="range"
-        style={{ width: '60vw' }}
       />
     )}
     {active && (

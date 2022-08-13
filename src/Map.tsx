@@ -10,28 +10,52 @@ import grayCircle from './circle_gray.svg'
 import greenCircle from './circle_green.svg'
 import redCircle from './circle_red.svg'
 import mapStyles from './Map.module.scss'
+
+const iconSize = [20, 20] as L.PointTuple
+const selectedIconSize = [30, 30] as L.PointTuple
+
 const generalIcon = L.icon({
   iconUrl: blueCircle,
-  iconSize: [20, 20],
+  iconSize,
 })
 
 const openIcon = L.icon({
   iconUrl: greenCircle,
-  iconSize: [20, 20],
+  iconSize,
 })
 
 const selfServiceIcon = L.icon({
   iconUrl: redCircle,
-  iconSize: [20, 20],
+  iconSize,
 })
 
 const unknownIcon = L.icon({
   iconUrl: grayCircle,
-  iconSize: [20, 20],
+  iconSize,
+})
+
+const generalIconSelected = L.icon({
+  iconUrl: blueCircle,
+  iconSize: selectedIconSize,
+})
+
+const openIconSelected = L.icon({
+  iconUrl: greenCircle,
+  iconSize: selectedIconSize,
+})
+
+const selfServiceIconSelected = L.icon({
+  iconUrl: redCircle,
+  iconSize: selectedIconSize,
+})
+
+const unknownIconSelected = L.icon({
+  iconUrl: grayCircle,
+  iconSize: selectedIconSize,
 })
 
 export type MarkerType = {
-  id: string
+  id: number
   coordinates: [number, number]
   type: 'general' | 'open' | 'self-service' | 'unknown'
 }
@@ -48,11 +72,13 @@ const MapClick = ({ onClick }: { onClick?: (map: L.Map) => void }) => {
 
 const Map = ({
   markers,
+  selection,
   onSelect,
   onDeselect,
 }: {
   markers: MarkerType[]
-  onSelect: (id: string) => void
+  selection: number | null
+  onSelect: (id: number) => void
   onDeselect: () => void
 }) => (
   <MapContainer
@@ -75,11 +101,21 @@ const Map = ({
             : marker.type === 'unknown'
             ? unknownIcon
             : generalIcon
+
+        const iconSelected =
+          marker.type === 'open'
+            ? openIconSelected
+            : marker.type === 'self-service'
+            ? selfServiceIconSelected
+            : marker.type === 'unknown'
+            ? unknownIconSelected
+            : generalIconSelected
+
         return (
           <Marker
             key={marker.id}
             position={marker.coordinates}
-            icon={icon}
+            icon={marker.id === selection ? iconSelected : icon}
             eventHandlers={{ click: () => onSelect(marker.id) }}
           ></Marker>
         )

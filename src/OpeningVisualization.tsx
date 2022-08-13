@@ -32,7 +32,6 @@ const OpeningVisualization = ({
       ]
 
       for (let i = dayRange[0] + 1; i < dayRange[1]; ++i) {
-        console.log(i)
         drawVerticalLine(i * 24 * 3600 * 1000, timeRange, '#000b', 0.5, canvas)
       }
     }
@@ -89,8 +88,6 @@ const getLibraryGraph = (libraries: Library[]): GraphPoint[] => {
     times[closes][status === 1 ? 'open' : 'selfService']--
   })
 
-  console.log(times)
-
   const openingChanges = Object.entries(times)
     .map(([key, value]) => [+key, value] as const)
     .sort(([a], [b]) => a - b)
@@ -104,8 +101,6 @@ const getLibraryGraph = (libraries: Library[]): GraphPoint[] => {
     })
     return prev
   }, [] as GraphPoint[])
-
-  console.log(openings)
 
   return openings
 }

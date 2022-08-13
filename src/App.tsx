@@ -2,6 +2,7 @@ import 'leaflet.markercluster/dist/MarkerCluster.css'
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 import 'leaflet/dist/leaflet.css'
 import { useEffect, useState } from 'react'
+import { useLocation, useMatch, useNavigate } from 'react-router-dom'
 import type { Library } from './api'
 import { getLibraries } from './api'
 import './App.css'
@@ -14,9 +15,16 @@ import TimeControl from './TimeControl'
 
 function App() {
   const [libraries, setLibraries] = useState<Library[]>([])
-  const [selectedLibraryId, setSelectedLibraryId] = useState('')
   const [timeline, setTimeline] = useState(false)
   const [selectedTime, setSelectedTime] = useState(Date.now())
+  const navigate = useNavigate()
+
+  console.log(useLocation())
+  const match = useMatch(':id')
+
+  const selectedLibraryId = match ? Number(match.params.id) : null
+
+  console.log(selectedLibraryId)
 
   useEffect(() => {
     getLibraries('fi').then(l => setLibraries(l))
@@ -31,7 +39,11 @@ function App() {
     )
   }, [libraries])
 
+  const handleSelectLibrary = (id: number) => navigate(`/${id}`)
+  const handleDeselectLibrary = () => navigate('/')
+
   const selectedLibrary = libraries.find(l => l.Id === selectedLibraryId)
+  console.log(libraries, selectedLibrary)
   const [from, to] = getTimeRange(libraries)
 
   const markers: MarkerType[] = timeline
@@ -52,12 +64,28 @@ function App() {
           type: 'general',
         }))
 
+  const selectedMarker: MarkerType | null =
+    selectedLibrary && selectedLibrary.Address.Coordinates
+      ? {
+          id: selectedLibrary.Id,
+          coordinates: selectedLibrary.Address.Coordinates,
+          type: (['unknown', 'general', 'self-service', 'open'] as const)[
+            timeline ? libraryOpen(selectedLibrary, selectedTime) + 1 : 0
+          ],
+        }
+      : null
+
+  // if selected marker is not among markers, add it
+  if (selectedMarker && !markers.find(({ id }) => id === selectedMarker.id)) {
+    markers.push(selectedMarker)
+  }
   return (
     <>
       <Map
         markers={markers}
-        onSelect={id => setSelectedLibraryId(id)}
-        onDeselect={() => setSelectedLibraryId('')}
+        selection={selectedMarker?.id ?? null}
+        onSelect={handleSelectLibrary}
+        onDeselect={handleDeselectLibrary}
       />
       {selectedLibrary && <Info library={selectedLibrary} />}
       <OpeningVisualization

@@ -11,7 +11,7 @@ export type Schedule = {
 }
 
 export type Library = {
-  Id: string
+  Id: number
   Name: string
   Email: string
   Homepage: string
@@ -40,7 +40,7 @@ export const getLibraries = async (language: Language) => {
     try {
       library.Address.Coordinates = await findLibraryCoordinates(library)
     } catch (e) {
-      console.log(e)
+      library.Address.Coordinates = null
     }
   }
   return libraries
@@ -48,7 +48,7 @@ export const getLibraries = async (language: Language) => {
 
 const findLibraryCoordinates = async (library: Library) => {
   // find in cache first
-  if (!Object.keys(coordinates).includes(library.Id)) {
+  if (Object.keys(coordinates).includes(String(library.Id))) {
     return coordinates[library.Id]
   }
   let osm
@@ -61,7 +61,6 @@ const findLibraryCoordinates = async (library: Library) => {
   }
 
   if (!osm) {
-    console.log(library)
     throw new Error('library not found')
   }
 

@@ -8,6 +8,7 @@ import './App.css'
 import Info from './Info'
 import type { MarkerType } from './Map'
 import Map from './Map'
+import OpeningVisualization from './OpeningVisualization'
 import { getTimeRange, libraryOpen } from './time'
 import TimeControl from './TimeControl'
 
@@ -59,6 +60,10 @@ function App() {
         onDeselect={() => setSelectedLibraryId('')}
       />
       {selectedLibrary && <Info library={selectedLibrary} />}
+      <OpeningVisualization
+        libraries={selectedLibrary ? [selectedLibrary] : libraries}
+        time={selectedTime}
+      />
       <TimeControl
         active={timeline}
         onToggle={() => setTimeline(isOn => !isOn)}

@@ -1,6 +1,6 @@
 type Language = 'en' | 'fi' | 'sv' | 'ru'
 
-type Schedule = {
+export type Schedule = {
   Sections: {
     SelfService: {
       times: { Opens: string; Closes: string; Status: 1 | 2 }[]

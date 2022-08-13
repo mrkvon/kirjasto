@@ -1,4 +1,4 @@
-import { Library } from './api'
+import { Library, Schedule } from './api'
 
 export const libraryOpen = (library: Library, time: number): -1 | 0 | 1 | 2 => {
   // -1 : errored - schedule doesn't exist
@@ -45,6 +45,7 @@ export const getSchedule = (library: Library, time: number) => {
 
 export const getTimeRange = (libraries: Library[]): [number, number] => {
   if (!libraries.length) return [0, 0]
+  // TODO get the longest schedules array
   const schedules = libraries[0].Schedules
   const firstDay = schedules[0].Date
   const lastDay = schedules[schedules.length - 1].Date
@@ -57,6 +58,35 @@ const parseTime = (a: string) => {
   const [hours, minutes] = a.split(':')
   return Number(hours) + Number(minutes) / 60
 }
+
+type OpeningTime = {
+  opens: number
+  closes: number
+  status: 1 | 2
+}
+
+export const schedule2OpeningTimes = (schedule: Schedule): OpeningTime[] =>
+  schedule.Sections.SelfService.times.map(({ Opens, Closes, Status }) => {
+    const openTime = parseTime(Opens)
+    const closeTime = parseTime(Closes)
+
+    let opens = new Date(schedule.Date)
+    let closes = new Date(schedule.Date)
+    opens.setHours(openTime)
+    closes.setHours(closeTime)
+    opens.setMinutes((openTime - Math.floor(openTime)) * 60)
+    closes.setMinutes((closeTime - Math.floor(closeTime)) * 60)
+    opens.setSeconds(0)
+    closes.setSeconds(0)
+    opens.setMilliseconds(0)
+    closes.setMilliseconds(0)
+
+    return {
+      opens: opens.getTime(),
+      closes: closes.getTime(),
+      status: Status,
+    }
+  })
 
 /*
 function getTimes(kirjasto: Library, day: number) {

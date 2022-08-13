@@ -17,6 +17,7 @@ const TimeControl = ({
 }) => (
   <div className={styles.container}>
     <button onClick={onToggle}>Timeline {active ? 'On' : 'Off'}</button>
+    <br />
     {active && (
       <input
         className={styles.timeline}

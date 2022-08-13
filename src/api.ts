@@ -26,7 +26,14 @@ export type Library = {
   Phone: { Number: string }
   Picture: { Files: { medium: { url: string } } } // TODO
   Schedules: Schedule[]
-  ServiceIds: string[]
+  ServiceIds: number[]
+}
+
+export type Service = {
+  Id: number
+  Name: string
+  Type: string
+  Slug: string
 }
 
 const getUri = (language: Language) =>
@@ -44,6 +51,13 @@ export const getLibraries = async (language: Language) => {
     }
   }
   return libraries
+}
+
+export const getServices = async (language: Language) => {
+  const response = await fetch(
+    `http://localhost:3001/?uri=https://www.helmet.fi/api/LibraryApi/libraryservice/${language}/`,
+  )
+  return (await response.json()) as Service[]
 }
 
 const findLibraryCoordinates = async (library: Library) => {

@@ -1,35 +1,39 @@
-import { useState } from 'react'
-import { Library } from './api'
+import React, { FC, useState } from 'react'
 import styles from './Search.module.scss'
 
-const Search = ({
-  libraries,
-  onSelect,
-}: {
-  libraries: Library[]
-  onSelect: (id: number) => void
+interface SearchProps extends React.HTMLAttributes<HTMLDivElement> {
+  items: { Id: number; Name: string }[]
+  placeholder?: string
+  onSelectItem: (id: number) => void
+}
+
+const Search: FC<SearchProps> = ({
+  items,
+  onSelectItem,
+  placeholder = 'Search',
+  ...props
 }) => {
   const [query, setQuery] = useState('')
 
   const found =
     query.length < 2
       ? []
-      : libraries
+      : items
           .filter(lib =>
             simplifyString(lib.Name).includes(simplifyString(query)),
           )
           .slice(0, 10)
 
   const handleClickResult = (id: number) => {
-    onSelect(id)
+    onSelectItem(id)
     setQuery('')
   }
 
   return (
-    <div style={{ zIndex: 1000, position: 'absolute', top: 20, left: 50 }}>
+    <div {...props}>
       <input
         type="text"
-        placeholder="Search library"
+        placeholder={placeholder}
         value={query}
         onChange={e => setQuery(e.target.value)}
       />

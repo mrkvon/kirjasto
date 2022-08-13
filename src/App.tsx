@@ -10,6 +10,7 @@ import Info from './Info'
 import type { MarkerType } from './Map'
 import Map from './Map'
 import OpeningVisualization from './OpeningVisualization'
+import Search from './Search'
 import { getTimeRange, libraryOpen } from './time'
 import TimeControl from './TimeControl'
 
@@ -87,6 +88,7 @@ function App() {
         onSelect={handleSelectLibrary}
         onDeselect={handleDeselectLibrary}
       />
+      <Search libraries={libraries} onSelect={handleSelectLibrary} />
       {selectedLibrary && <Info library={selectedLibrary} />}
       <OpeningVisualization
         libraries={selectedLibrary ? [selectedLibrary] : libraries}

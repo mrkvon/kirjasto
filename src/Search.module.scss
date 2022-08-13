@@ -1,0 +1,14 @@
+.list {
+  background-color: #fff;
+  margin: 0;
+  padding: 0;
+  .item {
+    list-style-type: none;
+    margin: 0;
+    padding: 0.4em 1em;
+    &:hover {
+      background-color: #eee;
+    }
+    cursor: pointer;
+  }
+}

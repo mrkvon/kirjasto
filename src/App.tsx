@@ -31,15 +31,6 @@ function App() {
     getServices('en').then(s => setServices(s))
   }, [])
 
-  useEffect(() => {
-    console.log(libraries)
-    console.log(
-      Object.fromEntries(
-        libraries.map(library => [library.Id, library.Address.Coordinates]),
-      ),
-    )
-  }, [libraries])
-
   const handleSelectLibrary = (id: number) => navigate(`/${id}`)
   const handleDeselectLibrary = () => navigate('/')
 
@@ -88,7 +79,6 @@ function App() {
   const availableServices = services.filter(service =>
     availableServiceIds.includes(service.Id),
   )
-  console.log(services.length, availableServiceIds.length, availableServiceIds)
 
   const handleFilterToggle = (id: number) => {
     setFilters(filters => {

@@ -63,7 +63,6 @@ export type MarkerType = {
 const MapClick = ({ onClick }: { onClick?: (map: L.Map) => void }) => {
   const map = useMapEvents({
     click() {
-      console.log('clicked')
       if (onClick) onClick(map)
     },
   })

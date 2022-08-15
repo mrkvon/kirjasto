@@ -91,8 +91,6 @@ const splitTime = (time: number): [number, number, number, number] => {
   return [hours, minutes, seconds, milliseconds]
 }
 
-console.log('............', splitTime(1.22132))
-
 /**
  * Set a date (timestamp) to a specific time
  * @param time - time (like 4.5 when you want to express 4:30)

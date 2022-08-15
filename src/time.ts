@@ -12,18 +12,10 @@ export const libraryOpen = (library: Library, time: number): -1 | 0 | 1 | 2 => {
       const opens = parseTime(t.Opens)
       const closes = parseTime(t.Closes)
 
-      let opensTime = new Date(schedule.Date)
-      let closesTime = new Date(schedule.Date)
-      opensTime.setHours(opens)
-      closesTime.setHours(closes)
-      opensTime.setMinutes((opens - Math.floor(opens)) * 60)
-      closesTime.setMinutes((closes - Math.floor(closes)) * 60)
-      opensTime.setSeconds(0)
-      closesTime.setSeconds(0)
-      opensTime.setMilliseconds(0)
-      closesTime.setMilliseconds(0)
+      let opensTime = setTime(opens, new Date(schedule.Date).getTime())
+      let closesTime = setTime(closes, new Date(schedule.Date).getTime())
 
-      return time >= opensTime.getTime() && time < closesTime.getTime()
+      return time >= opensTime && time < closesTime
     })
     return foundTime?.Status ?? 0
   } catch {
@@ -34,8 +26,8 @@ export const libraryOpen = (library: Library, time: number): -1 | 0 | 1 | 2 => {
 export const getSchedule = (library: Library, time: number) => {
   const schedule = library.Schedules.find(
     schedule =>
-      time >= new Date(schedule.Date).setHours(0) &&
-      time < new Date(schedule.Date).setHours(24),
+      time >= setTime(0, new Date(schedule.Date).getTime()) &&
+      time < setTime(24, new Date(schedule.Date).getTime()),
   )
   if (!schedule) {
     throw new Error('schedule not found')
@@ -47,10 +39,15 @@ export const getTimeRange = (libraries: Library[]): [number, number] => {
   if (!libraries.length) return [0, 0]
   // TODO get the longest schedules array
   const schedules = libraries[0].Schedules
+  if (schedules.length === 0)
+    return [setTime(0, Date.now()), setTime(24, Date.now())]
   const firstDay = schedules[0].Date
   const lastDay = schedules[schedules.length - 1].Date
 
-  return [new Date(firstDay).setHours(0), new Date(lastDay).setHours(24)]
+  return [
+    setTime(0, new Date(firstDay).getTime()),
+    setTime(24, new Date(lastDay).getTime()),
+  ]
 }
 
 const parseTime = (a: string) => {
@@ -70,23 +67,50 @@ export const schedule2OpeningTimes = (schedule: Schedule): OpeningTime[] =>
     const openTime = parseTime(Opens)
     const closeTime = parseTime(Closes)
 
-    let opens = new Date(schedule.Date)
-    let closes = new Date(schedule.Date)
-    opens.setHours(openTime)
-    closes.setHours(closeTime)
-    opens.setMinutes((openTime - Math.floor(openTime)) * 60)
-    closes.setMinutes((closeTime - Math.floor(closeTime)) * 60)
-    opens.setSeconds(0)
-    closes.setSeconds(0)
-    opens.setMilliseconds(0)
-    closes.setMilliseconds(0)
+    const opens = setTime(openTime, new Date(schedule.Date).getTime())
+    const closes = setTime(closeTime, new Date(schedule.Date).getTime())
 
     return {
-      opens: opens.getTime(),
-      closes: closes.getTime(),
+      opens,
+      closes,
       status: Status,
     }
   })
+
+/**
+ * Given the time in real number hours, returns hours, minutes, seconds (rounded) and milliseconds (not rounded)
+ */
+const splitTime = (time: number): [number, number, number, number] => {
+  const hours = Math.floor(time)
+  const remainderMinutes = (time - hours) * 60
+  const minutes = Math.floor(remainderMinutes)
+  const remainderSeconds = (remainderMinutes - minutes) * 60
+  const seconds = Math.floor(remainderSeconds)
+  const milliseconds = (remainderSeconds - seconds) * 1000
+
+  return [hours, minutes, seconds, milliseconds]
+}
+
+console.log('............', splitTime(1.22132))
+
+/**
+ * Set a date (timestamp) to a specific time
+ * @param time - time (like 4.5 when you want to express 4:30)
+ * @param timestamp
+ * @returns timestamp changed to the specific hour given by `time`
+ * @TODO make sure this works always in Helsinki time
+ */
+const setTime = (time: number, timestamp: number): number => {
+  const [hours, minutes, seconds, milliseconds] = splitTime(time)
+
+  let date = new Date(timestamp)
+  date.setHours(hours)
+  date.setMinutes(minutes)
+  date.setSeconds(seconds)
+  date.setMilliseconds(milliseconds)
+
+  return date.getTime()
+}
 
 /*
 function getTimes(kirjasto: Library, day: number) {

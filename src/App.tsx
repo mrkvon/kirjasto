@@ -150,7 +150,13 @@ function App() {
           onClearAll={() => setFilters([])}
         />
       </div>
-      {selectedLibrary && <Info library={selectedLibrary} />}
+      {selectedLibrary && (
+        <Info
+          className={layout.info}
+          library={selectedLibrary}
+          onClose={handleDeselectLibrary}
+        />
+      )}
       <TimeControl
         className={layout.timeline}
         libraries={selectedLibrary ? [selectedLibrary] : libraries}

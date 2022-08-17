@@ -1,9 +1,29 @@
 .container {
-  position: absolute;
-  bottom: 0;
-  z-index: 1000;
+  pointer-events: none;
+  * {
+    pointer-events: all;
+  }
 }
 
 .timeline {
-  width: 60vw;
+  width: calc(100% - 50px);
+  margin: 0;
+  position: relative;
+}
+
+.button {
+  width: 50px;
+  height: 50px;
+
+  background-color: #fff8;
+  &.on {
+    color: darkblue;
+    background-color: #fff;
+  }
+}
+
+.visualization {
+  height: 50px;
+  width: calc(100% - 50px);
+  position: absolute;
 }

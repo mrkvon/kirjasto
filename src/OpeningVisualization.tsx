@@ -1,14 +1,15 @@
-import { useEffect, useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Library } from './api'
 import { getTimeRange, schedule2OpeningTimes } from './time'
 
 const OpeningVisualization = ({
   libraries,
   time,
+  ...props
 }: {
   libraries: Library[]
   time: number
-}) => {
+} & React.HTMLAttributes<HTMLCanvasElement>) => {
   const ref = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
@@ -37,19 +38,7 @@ const OpeningVisualization = ({
     }
   })
 
-  return (
-    <canvas
-      ref={ref}
-      style={{
-        width: '60vw',
-        height: '50px',
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        zIndex: 1000,
-      }}
-    />
-  )
+  return <canvas ref={ref} {...props} />
 }
 
 export default OpeningVisualization

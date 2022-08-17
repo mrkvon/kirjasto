@@ -1,0 +1,15 @@
+.timeline {
+  position: absolute;
+  bottom: 0;
+  z-index: 1000;
+  width: 100vw;
+}
+
+.searchAndFilter {
+  position: absolute;
+  top: 20px;
+  left: 50px;
+  z-index: 1000;
+  display: flex;
+  align-items: baseline;
+}

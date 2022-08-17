@@ -7,9 +7,9 @@ import { getLibraries, getServices, Library, Service } from './api'
 import './App.css'
 import Filter from './Filter'
 import Info from './Info'
+import layout from './Layout.module.scss'
 import type { MarkerType } from './Map'
 import Map from './Map'
-import OpeningVisualization from './OpeningVisualization'
 import Search from './Search'
 import { getTimeRange, libraryOpen } from './time'
 import TimeControl from './TimeControl'
@@ -21,6 +21,8 @@ function App() {
   const navigate = useNavigate()
   const [services, setServices] = useState<Service[]>([])
   const [filters, setFilters] = useState<number[]>([])
+  const [searchActive, setSearchActive] = useState(false)
+  const [filterActive, setFilterActive] = useState(false)
 
   const match = useMatch(':id')
 
@@ -30,6 +32,19 @@ function App() {
     getLibraries('en').then(l => setLibraries(l))
     getServices('en').then(s => setServices(s))
   }, [])
+
+  // when filter is activated, desactivate search
+  useEffect(() => {
+    if (filterActive) {
+      setSearchActive(false)
+    }
+  }, [filterActive])
+
+  useEffect(() => {
+    if (searchActive) {
+      setFilterActive(false)
+    }
+  }, [searchActive])
 
   const handleSelectLibrary = (id: number) => navigate(`/${id}`)
   const handleDeselectLibrary = () => navigate('/')
@@ -110,27 +125,35 @@ function App() {
         onSelect={handleSelectLibrary}
         onDeselect={handleDeselectLibrary}
       />
-      <Search
-        items={libraries}
-        onSelectItem={handleSelectLibrary}
-        style={{ position: 'absolute', top: 20, left: 50, zIndex: 1000 }}
-      />
-      <Filter
-        options={availableServices.map(service => ({
-          id: service.Id,
-          name: service.Name,
-        }))}
-        selectedOptionIds={filters}
-        onToggle={handleFilterToggle}
-        onAdd={handleFilterAdd}
-        onRemove={handleFilterRemove}
-      />
+      <div className={layout.searchAndFilter}>
+        <Search
+          placeholder="Search libraries"
+          active={searchActive}
+          onToggle={() => setSearchActive(state => !state)}
+          items={libraries}
+          onSelectItem={id => {
+            setSearchActive(false)
+            handleSelectLibrary(id)
+          }}
+        />
+        <Filter
+          active={filterActive}
+          onToggleActive={() => setFilterActive(state => !state)}
+          options={availableServices.map(service => ({
+            id: service.Id,
+            name: service.Name,
+          }))}
+          selectedOptionIds={filters}
+          onToggle={handleFilterToggle}
+          onAdd={handleFilterAdd}
+          onRemove={handleFilterRemove}
+          onClearAll={() => setFilters([])}
+        />
+      </div>
       {selectedLibrary && <Info library={selectedLibrary} />}
-      <OpeningVisualization
-        libraries={selectedLibrary ? [selectedLibrary] : libraries}
-        time={selectedTime}
-      />
       <TimeControl
+        className={layout.timeline}
+        libraries={selectedLibrary ? [selectedLibrary] : libraries}
         active={timeline}
         onToggle={() => setTimeline(isOn => !isOn)}
         from={from}

@@ -63,7 +63,11 @@ const Search: FC<SearchProps> = ({
       {active && found.length > 0 && (
         <ul className={styles.list}>
           {found.map(a => (
-            <li className={styles.item} onClick={() => handleClickResult(a.Id)}>
+            <li
+              key={a.Id}
+              className={styles.item}
+              onClick={() => handleClickResult(a.Id)}
+            >
               {a.Name}
             </li>
           ))}

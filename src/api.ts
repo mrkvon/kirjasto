@@ -1,3 +1,5 @@
+import config from './config'
+
 type Language = 'en' | 'fi' | 'sv' | 'ru'
 
 export type Schedule = {
@@ -37,7 +39,7 @@ export type Service = {
 }
 
 const getUri = (language: Language) =>
-  `http://localhost:3001/?uri=https://www.helmet.fi/api/LibraryApi/librariesmini/${language}/`
+  `${config.api.proxy}https://www.helmet.fi/api/LibraryApi/librariesmini/${language}/`
 // const getUri = (language: Language) => `https://www.helmet.fi/api/LibraryApi/librariesmini/${language}/`
 
 export const getLibraries = async (language: Language) => {
@@ -55,7 +57,7 @@ export const getLibraries = async (language: Language) => {
 
 export const getServices = async (language: Language) => {
   const response = await fetch(
-    `http://localhost:3001/?uri=https://www.helmet.fi/api/LibraryApi/libraryservice/${language}/`,
+    `${config.api.proxy}https://www.helmet.fi/api/LibraryApi/libraryservice/${language}/`,
   )
   return (await response.json()) as Service[]
 }

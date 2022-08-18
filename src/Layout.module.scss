@@ -1,14 +1,14 @@
 @import './breakpoints.scss';
 
 .timeline {
-  position: absolute;
+  position: fixed;
   bottom: 0;
   z-index: 1000;
   width: 100vw;
 }
 
 .searchAndFilter {
-  position: absolute;
+  position: fixed;
   top: 20px;
   left: 50px;
   z-index: 1000;
@@ -24,7 +24,7 @@
     width: 400px;
   }
   height: 100vh;
-  position: absolute;
+  position: fixed;
   top: 0;
   right: 0;
   z-index: 1000;

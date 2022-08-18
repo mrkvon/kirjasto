@@ -38,12 +38,16 @@ export type Service = {
   Slug: string
 }
 
-const getUri = (language: Language) =>
-  `${config.api.proxy}https://www.helmet.fi/api/LibraryApi/librariesmini/${language}/`
-// const getUri = (language: Language) => `https://www.helmet.fi/api/LibraryApi/librariesmini/${language}/`
+const getProxiedUri = (uri: string, proxy: string) =>
+  proxy ? proxy + encodeURIComponent(uri) : uri
 
 export const getLibraries = async (language: Language) => {
-  const response = await fetch(getUri(language))
+  const response = await fetch(
+    getProxiedUri(
+      `https://www.helmet.fi/api/LibraryApi/librariesmini/${language}/`,
+      config.api.proxy,
+    ),
+  )
   const libraries = (await response.json()) as Library[]
   for (const library of libraries) {
     try {
@@ -57,7 +61,10 @@ export const getLibraries = async (language: Language) => {
 
 export const getServices = async (language: Language) => {
   const response = await fetch(
-    `${config.api.proxy}https://www.helmet.fi/api/LibraryApi/libraryservice/${language}/`,
+    getProxiedUri(
+      `https://www.helmet.fi/api/LibraryApi/libraryservice/${language}/`,
+      config.api.proxy,
+    ),
   )
   return (await response.json()) as Service[]
 }

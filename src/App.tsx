@@ -159,7 +159,7 @@ function App() {
       )}
       <TimeControl
         className={layout.timeline}
-        libraries={selectedLibrary ? [selectedLibrary] : libraries}
+        libraries={selectedLibrary ? [selectedLibrary] : filteredLibraries}
         active={timeline}
         onToggle={() => setTimeline(isOn => !isOn)}
         from={from}

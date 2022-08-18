@@ -12,3 +12,20 @@
   top: 0.5rem;
   right: 0.5rem;
 }
+
+.link {
+  color: #69c;
+}
+
+.infoSection {
+  & > div {
+    margin: 1rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+
+    & > :first-child {
+      margin-right: 0.5rem;
+    }
+  }
+}

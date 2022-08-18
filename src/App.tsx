@@ -154,6 +154,7 @@ function App() {
         <Info
           className={layout.info}
           library={selectedLibrary}
+          services={services}
           onClose={handleDeselectLibrary}
         />
       )}

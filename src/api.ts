@@ -25,16 +25,28 @@ export type Library = {
     City: string
     Coordinates: null | [number, number]
   }
-  Phone: { Number: string }
+  Phone: { Number: string } | null
   Picture: { Files: { medium: { url: string } } } // TODO
   Schedules: Schedule[]
   ServiceIds: number[]
 }
 
+export const serviceTypes = [
+  'hardware',
+  'service',
+  'room',
+  'collection',
+  'web_service',
+] as const
+
+// https://stackoverflow.com/a/57447842
+type ArrayElement<A> = A extends readonly (infer T)[] ? T : never
+type ServiceType = ArrayElement<typeof serviceTypes>
+
 export type Service = {
   Id: number
   Name: string
-  Type: string
+  Type: ServiceType
   Slug: string
 }
 

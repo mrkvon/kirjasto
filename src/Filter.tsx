@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { FC, HTMLAttributes, useState } from 'react'
+import { FC, HTMLAttributes, useEffect, useState } from 'react'
 import { FaFilter } from 'react-icons/fa'
 import { MdClose } from 'react-icons/md'
 import styles from './Filter.module.scss'
@@ -26,6 +26,16 @@ const Filter = ({
   onClearAll: () => void
 } & HTMLAttributes<HTMLDivElement>) => {
   const [displayedOptionIds, setDisplayedOptionIds] = useState<number[]>([])
+
+  useEffect(() => {
+    const selectedNonDisplayedOptions = selectedOptionIds.filter(
+      id => !displayedOptionIds.includes(id),
+    )
+    if (selectedNonDisplayedOptions.length > 0) {
+      setDisplayedOptionIds(ids => [...ids, ...selectedNonDisplayedOptions])
+    }
+  }, [selectedOptionIds, displayedOptionIds])
+
   return (
     <div {...props}>
       <button

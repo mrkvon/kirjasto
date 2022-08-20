@@ -7,7 +7,7 @@
 - [ ] improve timeline
 - [ ] change self-service color
 - [ ] figure out Helsinki time
-- [ ] link from a service to filter
+- [x] link from a service to filter
 - [ ] better time range control
 
 ## Maybe

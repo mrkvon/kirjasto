@@ -15,8 +15,9 @@ const Info: FC<
     library: Library
     services: Service[]
     onClose: () => void
+    onClickService: (id: number) => void
   } & HTMLAttributes<HTMLDivElement>
-> = ({ library, services, onClose, className, ...props }) => {
+> = ({ library, services, onClose, onClickService, className, ...props }) => {
   const [showAllSchedules, setShowAllSchedules] = useState(false)
   return (
     <div className={classNames(className, styles.container)} {...props}>
@@ -68,7 +69,7 @@ const Info: FC<
               {new Date(schedule.Date).toString().substring(0, 3)}{' '}
               {new Date(schedule.Date).toLocaleDateString('fi')}
               {schedule.Sections.SelfService.times.map(time => (
-                <div>
+                <div key={time.Opens + ' ' + time.Closes}>
                   {time.Opens} - {time.Closes}{' '}
                   {time.Status === 1 ? 'Staff Present' : 'Self Service'}
                 </div>
@@ -86,10 +87,11 @@ const Info: FC<
         <h2>Services</h2>
         {serviceTypes.map(type => (
           <ServiceSubsection
+            key={type}
             serviceIds={library.ServiceIds}
             services={services}
             type={type}
-            key={type}
+            onClickService={onClickService}
           />
         ))}
       </section>
@@ -111,7 +113,8 @@ const ServiceSubsection: FC<{
   serviceIds: Library['ServiceIds']
   services: Service[]
   type: Service['Type']
-}> = ({ serviceIds, services, type }) => {
+  onClickService: (id: number) => void
+}> = ({ serviceIds, services, type, onClickService }) => {
   const sectionServices = services
     .filter(s => serviceIds.includes(s.Id) && s.Type === type)
     .sort((a, b) => (a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0))
@@ -121,7 +124,14 @@ const ServiceSubsection: FC<{
     <section>
       <h3>{serviceSectionNames[type]}</h3>
       {sectionServices.map(service => (
-        <div key={service.Id}>{service.Name}</div>
+        <div key={service.Id}>
+          <button
+            onClick={() => onClickService(service.Id)}
+            className={styles.serviceButton}
+          >
+            {service.Name}
+          </button>
+        </div>
       ))}
     </section>
   )

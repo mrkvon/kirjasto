@@ -155,6 +155,10 @@ function App() {
           className={layout.info}
           library={selectedLibrary}
           services={services}
+          onClickService={id => {
+            setFilterActive(true)
+            setFilters([id])
+          }}
           onClose={handleDeselectLibrary}
         />
       )}

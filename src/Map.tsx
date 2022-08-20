@@ -8,7 +8,7 @@ import './App.css'
 import blueCircle from './circle_dark_blue.svg'
 import grayCircle from './circle_gray.svg'
 import greenCircle from './circle_green.svg'
-import redCircle from './circle_red.svg'
+import orangeCircle from './circle_orange.svg'
 import mapStyles from './Map.module.scss'
 
 const iconSize = [20, 20] as L.PointTuple
@@ -25,7 +25,7 @@ const openIcon = L.icon({
 })
 
 const selfServiceIcon = L.icon({
-  iconUrl: redCircle,
+  iconUrl: orangeCircle,
   iconSize,
 })
 
@@ -45,7 +45,7 @@ const openIconSelected = L.icon({
 })
 
 const selfServiceIconSelected = L.icon({
-  iconUrl: redCircle,
+  iconUrl: orangeCircle,
   iconSize: selectedIconSize,
 })
 

@@ -43,6 +43,10 @@ const OpeningVisualization = ({
 
 export default OpeningVisualization
 
+/*
+ * TODO make the naming more abstract
+ * like x, y: array
+ */
 type GraphPoint = {
   time: number
   open: number // percentage of open libraries
@@ -173,13 +177,13 @@ const drawLibraryGraph = (
         open: 0,
         selfService: 0,
       }
-      const red1 = pointToGraph(
+      const orange1 = pointToGraph(
         [point1.time, point1.selfService],
         xRange,
         yRange,
         [width, height],
       )
-      const red2 = pointToGraph([point2.time, 0], xRange, yRange, [
+      const orange2 = pointToGraph([point2.time, 0], xRange, yRange, [
         width,
         height,
       ])
@@ -210,8 +214,8 @@ const drawLibraryGraph = (
       context.fillStyle = '#228b22cc'
       context.fillRect(...points2Rect(green1, green2))
 
-      context.fillStyle = '#cf0000cc'
-      context.fillRect(...points2Rect(red1, red2))
+      context.fillStyle = '#ff6319cc'
+      context.fillRect(...points2Rect(orange1, orange2))
 
       context.fillStyle = '#fff7'
       context.fillRect(...points2Rect(white1, white2))

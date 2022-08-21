@@ -7,13 +7,24 @@
   width: 100vw;
 }
 
-.searchAndFilter {
+.mainMenu {
   position: fixed;
   top: 20px;
   left: 50px;
   z-index: 1000;
   display: flex;
-  align-items: baseline;
+  align-items: middle;
+
+  .menuItem {
+    &:hover {
+      background-color: #fffa;
+    }
+    height: 40px;
+    width: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
 .info {

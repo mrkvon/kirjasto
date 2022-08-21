@@ -1,3 +1,4 @@
+import classNames from 'classnames'
 import React, { FC, useEffect, useRef, useState } from 'react'
 import type { IconType } from 'react-icons'
 import { FaSearch } from 'react-icons/fa'
@@ -8,6 +9,7 @@ interface SearchProps extends React.HTMLAttributes<HTMLDivElement> {
   onToggle: () => void
   items: { Id: number; Name: string }[]
   placeholder?: string
+  menuClassName?: string
   onSelectItem: (id: number) => void
   Icon?: IconType | null
 }
@@ -19,6 +21,7 @@ const Search: FC<SearchProps> = ({
   onSelectItem,
   placeholder = 'Search',
   Icon = FaSearch,
+  menuClassName,
   ...props
 }) => {
   const [query, setQuery] = useState('')
@@ -46,7 +49,10 @@ const Search: FC<SearchProps> = ({
     <div {...props}>
       <label>
         {Icon && (
-          <button onClick={onToggle} className={styles.button}>
+          <button
+            className={classNames(menuClassName, styles.button)}
+            onClick={onToggle}
+          >
             <Icon size={20} />
           </button>
         )}

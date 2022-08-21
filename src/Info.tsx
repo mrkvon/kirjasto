@@ -1,5 +1,6 @@
 import classNames from 'classnames'
 import { FC, HTMLAttributes, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   FaEnvelope,
   FaExternalLinkAlt,
@@ -9,23 +10,42 @@ import {
 import { MdClose } from 'react-icons/md'
 import { Library, Service, serviceTypes } from './api'
 import styles from './Info.module.scss'
+import { Language } from './LanguageSwitch'
 
 const Info: FC<
   {
     library: Library
     services: Service[]
+    language: Language
     onClose: () => void
     onClickService: (id: number) => void
   } & HTMLAttributes<HTMLDivElement>
-> = ({ library, services, onClose, onClickService, className, ...props }) => {
+> = ({
+  library,
+  services,
+  language,
+  onClose,
+  onClickService,
+  className,
+  ...props
+}) => {
   const [showAllSchedules, setShowAllSchedules] = useState(false)
+  const link = {
+    en: 'library',
+    fi: 'kirjasto',
+    sv: 'bibliotek',
+    ru: 'biblioteka',
+  } as const
+
+  const { t } = useTranslation()
+
   return (
     <div className={classNames(className, styles.container)} {...props}>
       <h1>
         {library.Name}{' '}
         <a
           className={styles.link}
-          href={`https://www.helmet.fi/library/${library.Id}`}
+          href={`https://www.helmet.fi/${link[language]}/${library.Id}`}
           title={`${library.Name} Site`}
         >
           {/* TODO Library link is language specific! (library|kirjasto|biblioteka|bibliotek) */}
@@ -41,7 +61,7 @@ const Info: FC<
         className={styles.image}
       />
       <section className={styles.infoSection}>
-        <h2>Contact information</h2>
+        <h2>{t('Contact information')}</h2>
         <div>
           <FaMapMarkerAlt />
           <div style={{ display: 'inline-block' }}>
@@ -62,16 +82,18 @@ const Info: FC<
         )}
       </section>
       <section>
-        <h2>Opening hours</h2>
+        <h2>{t('Opening hours')}</h2>
         {library.Schedules.slice(...(showAllSchedules ? [] : [0, 7])).map(
           schedule => (
             <div key={schedule.Date}>
-              {new Date(schedule.Date).toString().substring(0, 3)}{' '}
-              {new Date(schedule.Date).toLocaleDateString('fi')}
+              {new Date(schedule.Date).toLocaleDateString(language, {
+                weekday: 'short',
+              })}{' '}
+              {new Date(schedule.Date).toLocaleDateString(language)}
               {schedule.Sections.SelfService.times.map(time => (
                 <div key={time.Opens + ' ' + time.Closes}>
                   {time.Opens} - {time.Closes}{' '}
-                  {time.Status === 1 ? 'Staff Present' : 'Self Service'}
+                  {time.Status === 1 ? t('Staff Present') : t('Self Service')}
                 </div>
               ))}
             </div>
@@ -79,12 +101,12 @@ const Info: FC<
         )}
         {library.Schedules.length > 7 && (
           <button onClick={() => setShowAllSchedules(a => !a)}>
-            {showAllSchedules ? 'show less' : 'show more'}
+            {showAllSchedules ? t('show less') : t('show more')}
           </button>
         )}
       </section>
       <section>
-        <h2>Services</h2>
+        <h2>{t('Services')}</h2>
         {serviceTypes.map(type => (
           <ServiceSubsection
             key={type}
@@ -101,20 +123,21 @@ const Info: FC<
 
 export default Info
 
-const serviceSectionNames: Record<Service['Type'], string> = {
-  web_service: 'Web service',
-  hardware: 'Devices',
-  service: 'Services',
-  room: 'Premises',
-  collection: 'Collections',
-}
-
 const ServiceSubsection: FC<{
   serviceIds: Library['ServiceIds']
   services: Service[]
   type: Service['Type']
   onClickService: (id: number) => void
 }> = ({ serviceIds, services, type, onClickService }) => {
+  const { t } = useTranslation()
+  const serviceSectionNames: Record<Service['Type'], string> = {
+    web_service: t('Web service'),
+    hardware: t('Devices'),
+    service: t('Services'),
+    room: t('Premises'),
+    collection: t('Collections'),
+  }
+
   const sectionServices = services
     .filter(s => serviceIds.includes(s.Id) && s.Type === type)
     .sort((a, b) => (a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0))

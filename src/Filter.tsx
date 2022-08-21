@@ -1,5 +1,6 @@
 import classNames from 'classnames'
 import { FC, HTMLAttributes, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { FaFilter } from 'react-icons/fa'
 import { MdClose } from 'react-icons/md'
 import styles from './Filter.module.scss'
@@ -14,6 +15,7 @@ const Filter = ({
   onAdd,
   onRemove,
   onClearAll,
+  menuClassName,
   ...props
 }: {
   active: boolean
@@ -24,6 +26,7 @@ const Filter = ({
   onAdd: (id: number) => void
   onRemove: (id: number) => void
   onClearAll: () => void
+  menuClassName?: string
 } & HTMLAttributes<HTMLDivElement>) => {
   const [displayedOptionIds, setDisplayedOptionIds] = useState<number[]>([])
 
@@ -36,12 +39,15 @@ const Filter = ({
     }
   }, [selectedOptionIds, displayedOptionIds])
 
+  const { t } = useTranslation()
+
   return (
     <div {...props}>
       <button
         className={classNames(
           styles.toggleButton,
           selectedOptionIds.length > 0 && styles.active,
+          menuClassName,
         )}
         onClick={onToggleActive}
       >
@@ -51,7 +57,7 @@ const Filter = ({
       {active && (
         <>
           <Search
-            placeholder="Search services"
+            placeholder={t('Search services')}
             Icon={null}
             active
             onToggle={() => {}}
@@ -92,7 +98,7 @@ const Filter = ({
                 }}
                 className={styles.clearAll}
               >
-                CLEAR ALL
+                {t('CLEAR ALL')}
               </button>
               <div className={styles.clearfix}></div>
             </div>

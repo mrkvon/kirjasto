@@ -1,6 +1,6 @@
 # TODO
 
-- [ ] translations
+- [x] i18n
 - [ ] style opening hours
 - [ ] make button "open now" at the top, like google has
 - [ ] make search library and search services list all items when open/active

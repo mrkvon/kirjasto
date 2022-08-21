@@ -2,17 +2,20 @@ import 'leaflet.markercluster/dist/MarkerCluster.css'
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 import 'leaflet/dist/leaflet.css'
 import { useEffect, useState } from 'react'
-import { useMatch, useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+import { useMatch, useNavigate, useSearchParams } from 'react-router-dom'
 import { getLibraries, getServices, Library, Service } from './api'
 import './App.css'
 import Filter from './Filter'
 import Info from './Info'
+import LanguageSwitch, { Language } from './LanguageSwitch'
 import layout from './Layout.module.scss'
 import type { MarkerType } from './Map'
 import Map from './Map'
 import Search from './Search'
 import { getTimeRange, libraryOpen } from './time'
 import TimeControl from './TimeControl'
+import useSearchParamsState from './useSearchParamsState'
 
 function App() {
   const [libraries, setLibraries] = useState<Library[]>([])
@@ -28,10 +31,9 @@ function App() {
 
   const selectedLibraryId = match ? Number(match.params.id) : null
 
-  useEffect(() => {
-    getLibraries('en').then(l => setLibraries(l))
-    getServices('en').then(s => setServices(s))
-  }, [])
+  const { t, i18n } = useTranslation()
+
+  const [searchParams /*, setSearchParams*/] = useSearchParams()
 
   // when filter is activated, desactivate search
   useEffect(() => {
@@ -46,8 +48,42 @@ function App() {
     }
   }, [searchActive])
 
-  const handleSelectLibrary = (id: number) => navigate(`/${id}`)
-  const handleDeselectLibrary = () => navigate('/')
+  const [language, setLanguage] = useSearchParamsState<Language>(
+    'lang',
+    'en',
+    lang =>
+      (['en', 'fi', 'ru', 'sv'] as const).includes(lang as Language)
+        ? (lang as Language)
+        : 'en',
+  )
+
+  useEffect(() => {
+    getLibraries(language).then(l => setLibraries(l))
+    getServices(language).then(s => setServices(s))
+  }, [language])
+
+  useEffect(() => {
+    i18n.changeLanguage(language) // returns promise, if you need to do anything afterwards
+  }, [language, i18n])
+
+  /*
+  const languageRaw = searchParams.get('language')
+  const language = (
+    languageRaw && ['en', 'fi', 'ru', 'sv'].includes(languageRaw)
+      ? languageRaw
+      : 'en'
+  ) as Language // why does type narrowing not work here?
+
+  const setLanguage = (language: Language) => {
+    setSearchParams({ ...Object.fromEntries(searchParams.entries()), language })
+  }
+  */
+
+  const handleSelectLibrary = (id: number) => {
+    navigate({ pathname: `/${id}`, search: searchParams.toString() })
+  }
+  const handleDeselectLibrary = () =>
+    navigate({ pathname: `/`, search: searchParams.toString() })
 
   const filteredLibraries = libraries.filter(
     library => filters.length === 0 || hasLibraryServices(library, filters),
@@ -125,9 +161,10 @@ function App() {
         onSelect={handleSelectLibrary}
         onDeselect={handleDeselectLibrary}
       />
-      <div className={layout.searchAndFilter}>
+      <div className={layout.mainMenu}>
         <Search
-          placeholder="Search libraries"
+          menuClassName={layout.menuItem}
+          placeholder={t('Search libraries')}
           active={searchActive}
           onToggle={() => setSearchActive(state => !state)}
           items={libraries}
@@ -137,6 +174,7 @@ function App() {
           }}
         />
         <Filter
+          menuClassName={layout.menuItem}
           active={filterActive}
           onToggleActive={() => setFilterActive(state => !state)}
           options={availableServices.map(service => ({
@@ -149,12 +187,18 @@ function App() {
           onRemove={handleFilterRemove}
           onClearAll={() => setFilters([])}
         />
+        <LanguageSwitch
+          menuClassName={layout.menuItem}
+          language={language}
+          onChangeLanguage={lang => setLanguage(lang)}
+        />
       </div>
       {selectedLibrary && (
         <Info
           className={layout.info}
           library={selectedLibrary}
           services={services}
+          language={language}
           onClickService={id => {
             setFilterActive(true)
             setFilters([id])
@@ -170,6 +214,7 @@ function App() {
         from={from}
         to={to - 1}
         time={selectedTime}
+        locale={language}
         onChangeTime={time => setSelectedTime(time)}
       />
     </>

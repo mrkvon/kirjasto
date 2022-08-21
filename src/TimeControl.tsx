@@ -2,12 +2,14 @@ import classNames from 'classnames'
 import { HTMLAttributes } from 'react'
 import { FaRegClock as ClockIcon } from 'react-icons/fa'
 import { Library } from './api'
+import { Language } from './LanguageSwitch'
 import OpeningVisualization from './OpeningVisualization'
 import styles from './TimeControl.module.scss'
 
 const TimeControl = ({
   libraries,
   active,
+  locale,
   onToggle,
   from,
   to,
@@ -18,6 +20,7 @@ const TimeControl = ({
 }: {
   libraries: Library[]
   active: boolean
+  locale: Language
   onToggle: () => void
   from: number
   to: number
@@ -27,9 +30,14 @@ const TimeControl = ({
   <div className={classNames(styles.container, className)} {...props}>
     {active && (
       <span>
-        {new Date(time).toString().substring(0, 3) +
+        {new Date(time)
+          .toLocaleString(locale, { weekday: 'short' })
+          .substring(0, 3) +
           ' ' +
-          new Date(time).toLocaleString('fi')}
+          new Date(time).toLocaleString(locale, {
+            dateStyle: 'short',
+            timeStyle: 'short',
+          })}
       </span>
     )}
     <br />

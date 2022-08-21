@@ -111,6 +111,18 @@ const setTime = (time: number, timestamp: number): number => {
 }
 
 /*
+returns hours when there are no minutes, and locale hours and minutes when there are minutes
+*/
+export const getSimpleTimeString = (time: string, locale: string): string => {
+  const [hours, minutes] = splitTime(parseTime(time))
+
+  if (!minutes) return String(hours)
+
+  const t = setTime(parseTime(time), Date.now())
+  return new Date(t).toLocaleTimeString(locale, { timeStyle: 'short' })
+}
+
+/*
 function getTimes(kirjasto: Library, day: number) {
   const { times } = kirjasto.Schedules[day].Sections.SelfService
   return times

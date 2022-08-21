@@ -11,6 +11,7 @@ import { MdClose } from 'react-icons/md'
 import { Library, Service, serviceTypes } from './api'
 import styles from './Info.module.scss'
 import { Language } from './LanguageSwitch'
+import { getSimpleTimeString } from './time'
 
 const Info: FC<
   {
@@ -83,22 +84,52 @@ const Info: FC<
       </section>
       <section>
         <h2>{t('Opening hours')}</h2>
-        {library.Schedules.slice(...(showAllSchedules ? [] : [0, 7])).map(
-          schedule => (
-            <div key={schedule.Date}>
-              {new Date(schedule.Date).toLocaleDateString(language, {
-                weekday: 'short',
-              })}{' '}
-              {new Date(schedule.Date).toLocaleDateString(language)}
-              {schedule.Sections.SelfService.times.map(time => (
-                <div key={time.Opens + ' ' + time.Closes}>
-                  {time.Opens} - {time.Closes}{' '}
-                  {time.Status === 1 ? t('Staff Present') : t('Self Service')}
-                </div>
-              ))}
-            </div>
-          ),
-        )}
+        <div className={styles.openingHours}>
+          {library.Schedules.slice(...(showAllSchedules ? [] : [0, 7])).map(
+            schedule =>
+              schedule.Sections.SelfService.times.length === 0 ? (
+                <>
+                  <div>
+                    {new Date(schedule.Date).toLocaleDateString(language, {
+                      weekday: 'short',
+                      day: 'numeric',
+                      month: 'numeric',
+                    })}
+                  </div>
+                  <div>-</div>
+                  <div></div>
+                </>
+              ) : (
+                schedule.Sections.SelfService.times
+                  .filter(time => time.Status > 0)
+                  .map((time, i) => (
+                    <>
+                      <div>
+                        {i === 0 &&
+                          new Date(schedule.Date).toLocaleDateString(language, {
+                            weekday: 'short',
+                            day: 'numeric',
+                            month: 'numeric',
+                          })}
+                      </div>
+                      <div>
+                        {getSimpleTimeString(time.Opens, language)}-
+                        {getSimpleTimeString(time.Closes, language)}
+                      </div>
+                      <div
+                        className={
+                          time.Status === 2 ? styles.selfService : undefined
+                        }
+                      >
+                        {time.Status === 1
+                          ? t('staff present')
+                          : t('self-service')}
+                      </div>
+                    </>
+                  ))
+              ),
+          )}
+        </div>
         {library.Schedules.length > 7 && (
           <button onClick={() => setShowAllSchedules(a => !a)}>
             {showAllSchedules ? t('show less') : t('show more')}

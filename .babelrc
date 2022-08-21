@@ -9,7 +9,8 @@
         "nsSeparator": null,
         "keyAsDefaultValue": ["en"],
         "useI18nextDefaultValue": false,
-        "outputPath": "public/locales/{{locale}}/{{ns}}.json"
+        "outputPath": "public/locales/{{locale}}/{{ns}}.json",
+        "discardOldKeys": true
       }
     ]
   ]

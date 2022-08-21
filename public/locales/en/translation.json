@@ -7,10 +7,10 @@
   "Premises": "Premises",
   "Search libraries": "Search libraries",
   "Search services": "Search services",
-  "Self Service": "Self Service",
   "Services": "Services",
-  "Staff Present": "Staff Present",
   "Web service": "Web service",
+  "self-service": "self-service",
   "show less": "show less",
-  "show more": "show more"
+  "show more": "show more",
+  "staff present": "staff present"
 }

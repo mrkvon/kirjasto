@@ -2,6 +2,7 @@ import 'leaflet.markercluster/dist/MarkerCluster.css'
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 import 'leaflet/dist/leaflet.css'
 import { useEffect, useState } from 'react'
+import Helmet from 'react-helmet'
 import { useTranslation } from 'react-i18next'
 import { useMatch, useNavigate, useSearchParams } from 'react-router-dom'
 import { getLibraries, getServices, Library, Service } from './api'
@@ -155,6 +156,11 @@ function App() {
 
   return (
     <>
+      <Helmet>
+        <title>
+          {t('Kirjasto - Interactive map of Helsinki area libraries')}
+        </title>
+      </Helmet>
       <Map
         markers={markers}
         selection={selectedMarker?.id ?? null}

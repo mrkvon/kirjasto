@@ -43,67 +43,57 @@ const Filter = ({
 
   return (
     <div {...props}>
-      <button
-        className={classNames(
+      <Search
+        menuClassName={classNames(
           styles.toggleButton,
           selectedOptionIds.length > 0 && styles.active,
           menuClassName,
         )}
-        onClick={onToggleActive}
-      >
-        <FaFilter size={20} />
-      </button>
-
-      {active && (
-        <>
-          <Search
-            placeholder={t('Search services')}
-            Icon={null}
-            active
-            onToggle={() => {}}
-            items={options.map(({ id, name }) => ({ Id: id, Name: name }))}
-            onSelectItem={(id: number) => {
-              setDisplayedOptionIds(options =>
-                options.includes(id) ? options : [...options, id],
-              )
-              onAdd(id)
+        placeholder={t('Search services')}
+        Icon={FaFilter}
+        active={active}
+        onToggle={onToggleActive}
+        items={options.map(({ id, name }) => ({ Id: id, Name: name }))}
+        onSelectItem={(id: number) => {
+          setDisplayedOptionIds(options =>
+            options.includes(id) ? options : [...options, id],
+          )
+          onAdd(id)
+        }}
+        className={styles.search}
+      />
+      {active && displayedOptionIds.length > 0 && (
+        <div className={styles.optionsContainer}>
+          <ul className={styles.optionsList}>
+            {options
+              .filter(o => displayedOptionIds.includes(o.id))
+              .map(option => (
+                <li key={option.id}>
+                  <FilterOption
+                    option={option}
+                    checked={selectedOptionIds.includes(option.id)}
+                    onClickChecked={() => onToggle(option.id)}
+                    onClose={() => {
+                      setDisplayedOptionIds(state =>
+                        state.filter(id => id !== option.id),
+                      )
+                      onRemove(option.id)
+                    }}
+                  />
+                </li>
+              ))}
+          </ul>
+          <button
+            onClick={() => {
+              onClearAll()
+              setDisplayedOptionIds([])
             }}
-            className={styles.search}
-          />
-          {displayedOptionIds.length > 0 && (
-            <div className={styles.optionsContainer}>
-              <ul className={styles.optionsList}>
-                {options
-                  .filter(o => displayedOptionIds.includes(o.id))
-                  .map(option => (
-                    <li key={option.id}>
-                      <FilterOption
-                        option={option}
-                        checked={selectedOptionIds.includes(option.id)}
-                        onClickChecked={() => onToggle(option.id)}
-                        onClose={() => {
-                          setDisplayedOptionIds(state =>
-                            state.filter(id => id !== option.id),
-                          )
-                          onRemove(option.id)
-                        }}
-                      />
-                    </li>
-                  ))}
-              </ul>
-              <button
-                onClick={() => {
-                  onClearAll()
-                  setDisplayedOptionIds([])
-                }}
-                className={styles.clearAll}
-              >
-                {t('CLEAR ALL')}
-              </button>
-              <div className={styles.clearfix}></div>
-            </div>
-          )}
-        </>
+            className={styles.clearAll}
+          >
+            {t('CLEAR ALL')}
+          </button>
+          <div className={styles.clearfix}></div>
+        </div>
       )}
     </div>
   )

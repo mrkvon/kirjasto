@@ -18,3 +18,23 @@
   width: 40px;
   height: 40px;
 }
+
+.searchLabel {
+  &.active {
+    background-color: white;
+    border-radius: 3px;
+    position: relative;
+  }
+  &:focus-within {
+    outline: 2px solid black;
+  }
+  display: flex;
+  align-items: center;
+  input {
+    border: none;
+    &:focus {
+      border: none;
+      outline: none;
+    }
+  }
+}

@@ -47,7 +47,9 @@ const Search: FC<SearchProps> = ({
 
   return (
     <div {...props}>
-      <label>
+      <label
+        className={classNames(styles.searchLabel, active && styles.active)}
+      >
         {Icon && (
           <button
             className={classNames(menuClassName, styles.button)}

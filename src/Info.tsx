@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { FC, HTMLAttributes, useState } from 'react'
+import { FC, Fragment, HTMLAttributes, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   FaEnvelope,
@@ -88,7 +88,7 @@ const Info: FC<
           {library.Schedules.slice(...(showAllSchedules ? [] : [0, 7])).map(
             schedule =>
               schedule.Sections.SelfService.times.length === 0 ? (
-                <>
+                <Fragment key={schedule.Date}>
                   <div>
                     {new Date(schedule.Date).toLocaleDateString(language, {
                       weekday: 'short',
@@ -98,12 +98,12 @@ const Info: FC<
                   </div>
                   <div>-</div>
                   <div></div>
-                </>
+                </Fragment>
               ) : (
                 schedule.Sections.SelfService.times
                   .filter(time => time.Status > 0)
                   .map((time, i) => (
-                    <>
+                    <Fragment key={schedule.Date + time.Opens + time.Closes}>
                       <div>
                         {i === 0 &&
                           new Date(schedule.Date).toLocaleDateString(language, {
@@ -125,7 +125,7 @@ const Info: FC<
                           ? t('staff present')
                           : t('self-service')}
                       </div>
-                    </>
+                    </Fragment>
                   ))
               ),
           )}

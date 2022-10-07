@@ -50,14 +50,15 @@ export type Service = {
   Slug: string
 }
 
-const getProxiedUri = (uri: string, proxy: string) =>
-  proxy ? proxy + encodeURIComponent(uri) : uri
+const getProxiedUri = (uri: string, proxy: string, isEncoded = false) =>
+  proxy ? proxy + (isEncoded ? encodeURIComponent(uri) : uri) : uri
 
 export const getLibraries = async (language: Language) => {
   const response = await fetch(
     getProxiedUri(
       `https://www.helmet.fi/api/LibraryApi/librariesmini/${language}/`,
       config.api.proxy,
+      config.api.isProxyEncoded,
     ),
   )
   const libraries = (await response.json()) as Library[]
